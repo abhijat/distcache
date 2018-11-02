@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+service CacheNode {
+
+    rpc EnumerateCache (Empty) returns (stream CacheEntry) {
+    }
+
+    rpc BecomeLeader (Empty) returns (Empty) {
+    }
+
+    rpc Get (CacheGetRequest) returns (CacheGetResponse) {
+    }
+
+    rpc Set (CacheSetRequest) returns (CacheSetResponse) {
+    }
+
+    rpc Delete (CacheDelRequest) returns (CacheDelResponse) {
+    }
+
+    rpc SendLogEntry (LogEntry) returns (Empty) {
+    }
+
+    rpc Ping (HeartbeatRequest) returns (HeartbeatResponse) {
+    }
+}
+
+message Empty {
+}
+
+message CacheEntry {
+    string Key = 1;
+    string Value = 2;
+}
+
+message CacheGetRequest {
+    string Key = 1;
+}
+
+message CacheGetResponse {
+    string Value = 1;
+}
+
+message CacheSetRequest {
+    string Key = 1;
+    string Value = 2;
+}
+
+message CacheSetResponse {
+    bool Success = 1;
+}
+
+message CacheDelRequest {
+    string Key = 1;
+}
+
+message CacheDelResponse {
+    bool Success = 1;
+}
+
+message LogEntry {
+    ModifyActionType ActionType = 1;
+    string Key = 2;
+    string Value = 3;
+}
+
+enum ModifyActionType {
+    SET = 0;
+    DEL = 1;
+}
+
+enum NodeState {
+    READY = 0;
+    SHUTTING_DOWN = 1;
+    LOG_REPLAY = 2;
+}
+
+enum NodeRole {
+    PEER = 0;
+    LEADER = 1;
+    BECOMING_LEADER = 2;
+}
+
+message HeartbeatRequest {
+}
+
+message HeartbeatResponse {
+    NodeState NodeState = 1;
+    NodeRole NodeRole = 2;
+}
